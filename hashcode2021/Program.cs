@@ -17,6 +17,8 @@ namespace hashcode2021
 
             foreach (string fileName in inputFiles)
             {
+                Problem.EntireDuration = DateTime.Now; //aa
+                Problem.EntireDuration = Problem.EntireDuration.AddMinutes(Problem.execDur);//aa
                 DateTime solveStartTime = DateTime.Now;
                 Solve(fileName);
                 Console.WriteLine("Solve time: {0}", new TimeSpan(DateTime.Now.Ticks - solveStartTime.Ticks));
@@ -58,8 +60,10 @@ namespace hashcode2021
             // the green light cycle
             solution = OptimizeCycleClearStreetsCarsDidntFinish(problem, solution);
 
-            // Hill-Climbing
-            //solution = OptimizeBruteForce(problem, solution, int.MaxValue);
+
+            //Hill-Climbing
+            solution = OptimizeBruteForce(problem, solution, int.MaxValue);
+
 
             // Simulate solution
             int score = problem.RunSimulationLite(solution);
@@ -76,17 +80,22 @@ namespace hashcode2021
             {
                 Solution solution = new Solution(problem.Intersections.Count);
 
+
                 // Generate a dummy solution - each incoming street will get a green light for 1 cycle
                 InitBasicSolution(problem, solution);
+
 
                 // Run simulation and try to change the order of green lights to minimize blocking
                 problem.OptimizeGreenLightOrder(solution, new HashSet<int>());
 
+
                 solution = OptimizeCycleDuration(problem, solution, parameter);
+
 
                 // Remove streets where the only car that passes is a car that didn't finish from
                 // the green light cycle
                 solution = OptimizeCycleClearStreetsCarsDidntFinish(problem, solution);
+
 
                 // Simulate solution
                 int simulationResultScore = problem.RunSimulationLite(solution);
@@ -98,20 +107,25 @@ namespace hashcode2021
             }
         }
 
+
         private static Solution OptimizeBruteForce(Problem problem, Solution solution, int maxPos)
         {
             int lastScore = problem.RunSimulationLite(solution);
 
+
             int maxGreenLigthCycle = solution.Intersections.Max(o => o.GreenLigths.Count);
             maxPos = Math.Min(maxPos, maxGreenLigthCycle);
 
-            while (true)
+
+            while (Problem.EntireDuration > DateTime.Now)//true)//aa
             {
                 // For D - comment everything but this. Too slow.
                 solution = OptimizeGreenLightOrderBruteForceSwap(problem, solution, maxPos);
 
+
                 // Minimal improvement, very slow. Comment if time is limited.
                 solution = OptimizeGreenLightOrderBruteForceMove(problem, solution, maxPos);
+
 
                 // Tested only with 3 & 10. 
                 // For E & F - 3 performed better
@@ -124,7 +138,7 @@ namespace hashcode2021
                 
                 int score = problem.RunSimulationLite(solution);
                 if (lastScore == score)
-                    break;
+                    continue;//break;
                 else
                 {
                     Console.WriteLine("Done full loop, starting again");
@@ -132,23 +146,30 @@ namespace hashcode2021
                 }
             }
 
+
             return solution;
         }
+
 
         private static Solution OptimizeGreenLightBruteForceDeltaDuration(Problem problem, Solution solution, int maxPos, int delta)
         {
             int bestScore = problem.RunSimulationLite(solution);
 
+
             for (int i = 0; i < solution.Intersections.Length; i++)
             {
+                if (Problem.EntireDuration <= DateTime.Now) break; //aa
                 int loopPos = Math.Min(maxPos, solution.Intersections[i].GreenLigths.Count);
+
 
                 for (int pos = 0; pos < loopPos; pos++)
                 {
+                    if (Problem.EntireDuration <= DateTime.Now) break; //aa
                     Solution newSolution = (Solution)solution.Clone();
                     newSolution.Intersections[i].GreenLigths[pos].Duration += delta;
                     if (newSolution.Intersections[i].GreenLigths[pos].Duration < 0)
                         continue;
+
 
                     int newScore = problem.RunSimulationLite(newSolution);
                     if ((newScore > bestScore)||
@@ -158,25 +179,33 @@ namespace hashcode2021
                         bestScore = newScore;
                         Console.WriteLine("New best: {0} [Delta]", bestScore);
                     }
+                    //if (Problem.EntireDuration <= DateTime.Now) break; //aa
                 }
             }
 
+
             return solution;
         }
+
 
         private static Solution OptimizeGreenLightOrderBruteForceSwap(Problem problem, Solution solution, int maxPos)
         { 
             int bestScore = problem.RunSimulationLite(solution);
 
+
             for (int i = 0; i < solution.Intersections.Length; i++)
             {
+                if (Problem.EntireDuration <= DateTime.Now) break; //aa
                 int loopPos = Math.Min(maxPos, solution.Intersections[i].GreenLigths.Count);
+
 
                 for (int pos2 = 1; pos2 < loopPos; pos2++)
                     for (int pos1 = 0; pos1 < pos2; pos1++)
                     {
+                        if (Problem.EntireDuration <= DateTime.Now) break; //aa
                         Solution newSolution = (Solution)solution.Clone();
                         Utils.SwapItems(newSolution.Intersections[i].GreenLigths, pos1, pos2);
+
 
                         int newScore = problem.RunSimulationLite(newSolution);
                         if (newScore > bestScore)
@@ -185,37 +214,48 @@ namespace hashcode2021
                             bestScore = newScore;
                             Console.WriteLine("New best: {0} [Swap]", bestScore);
                         }
+                        //if (Problem.EntireDuration <= DateTime.Now) break; //aa
                     }
             }
 
+
             return solution;
         }
+
 
         private static Solution OptimizeGreenLightOrderBruteForceMove(Problem problem, Solution solution, int maxPos)
         {
             int bestScore = problem.RunSimulationLite(solution);
 
+
             for (int i = 0; i < solution.Intersections.Length; i++)
             {
+                if (Problem.EntireDuration <= DateTime.Now) break; //aa
                 int loopPos = Math.Min(maxPos, solution.Intersections[i].GreenLigths.Count);
+
 
                 for (int pos2 = 0; pos2 < loopPos; pos2++)
                     for (int pos1 = 0; pos1 < loopPos; pos1++)
                     {
+                        if (Problem.EntireDuration <= DateTime.Now) break; //aa
                         if (pos1 == pos2)
                             continue;
+
 
                         // Skip - this is check by swap
                         if ((pos1 + 1 == pos2) || (pos1 - 1 == pos2))
                             continue;
 
+
                         Solution newSolution = (Solution)solution.Clone();
                         SolutionIntersection intersection = newSolution.Intersections[i];
+
 
                         // Move item
                         GreenLightCycle greenLightCycle = intersection.GreenLigths[pos1];
                         intersection.GreenLigths.RemoveAt(pos1);
                         intersection.GreenLigths.Insert(pos2, greenLightCycle);
+
 
                         int newScore = problem.RunSimulationLite(newSolution);
                         if (newScore > bestScore)
@@ -224,11 +264,14 @@ namespace hashcode2021
                             bestScore = newScore;
                             Console.WriteLine("New best: {0} [Move]", bestScore);
                         }
+                        //if (Problem.EntireDuration <= DateTime.Now) break; //aa
                     }
             }
 
+
             return solution;
         }
+
 
         private static Solution OptimizeCycleClearStreetsCarsDidntFinish(Problem problem, Solution solution)
         {
@@ -236,12 +279,15 @@ namespace hashcode2021
             // that street from the green lights & stop the car
             SimulationResult result = problem.RunSimulation(solution);
 
+
             // Nothing to optimize here
             if (result.CarsNotFinished.Count == 0)
                 return solution;
 
+
             Solution bestSolution = solution;
             int bestSolutionScore = result.Score;
+
 
             Solution newSolution = (Solution)solution.Clone();
             RemoveCycleStreetsUsedOnlyByCars(problem, newSolution, result.CarsNotFinished);
@@ -252,7 +298,9 @@ namespace hashcode2021
                 bestSolutionScore = newResultScore;
             }
 
+
             List<CarSimultionPosition> carsNotFinished = result.CarsNotFinished.OrderBy(o => o.TimeLeftOnDrive).ToList();
+
 
             while (true)
             {
@@ -262,33 +310,39 @@ namespace hashcode2021
                     CarSimultionPosition iCar = carsNotFinished[i];
                     carsNotFinished.RemoveAt(i);
 
+
                     newSolution = (Solution)solution.Clone();
                     RemoveCycleStreetsUsedOnlyByCars(problem, newSolution, carsNotFinished);
                     newResultScore = problem.RunSimulationLite(newSolution);
                     carsNotFinished.Insert(i, iCar);
+
 
                     if (newResultScore > bestSolutionScore)
                     {
                         bestSolution = newSolution;
                         bestSolutionScore = newResultScore;
                         bestSolutionExcludeCar = i;
-                        break;
+                        break; 
                     }
                 }
                 if (bestSolutionExcludeCar == -1)
-                    break;
+                    break; 
+
 
                 carsNotFinished.RemoveAt(bestSolutionExcludeCar);
             }
 
+
             return bestSolution;
         }
+
 
         private static void RemoveCycleStreetsUsedOnlyByCars(Problem problem, Solution solution, List<CarSimultionPosition> cars)
         {
             Dictionary<int, int> incomingUsageCountByStreet = new Dictionary<int, int>();
             foreach (Street street in problem.Streets.Values)
                 incomingUsageCountByStreet.Add(street.UniqueID, street.IncomingUsageCount);
+
 
             // Remove usage count of unwanted cars
             foreach (CarSimultionPosition car in cars)
@@ -297,6 +351,7 @@ namespace hashcode2021
                     Street street = car.Car.Streets[s];
                     incomingUsageCountByStreet[street.UniqueID]--;
                 }
+
 
             // Clear green lights of streets with no usage
             foreach (CarSimultionPosition car in cars)
@@ -319,20 +374,24 @@ namespace hashcode2021
                 }
         }
 
+
         private static Solution OptimizeCycleDurationByNumberOfIncomingCars(Problem problem, Solution solution)
         {
             Solution bestSolution = solution;
             int bestScore = problem.RunSimulationLite(solution);
 
+
             for (int d = 1; d < 50; d++)
             {
                 Solution newSolution = (Solution)solution.Clone();
+
 
                 foreach (SolutionIntersection intersection in newSolution.Intersections)
                 {
                     foreach (GreenLightCycle cycle in intersection.GreenLigths)
                         cycle.Duration = Math.Max(1, cycle.Street.IncomingUsageCount / d);
                 }
+
 
                 int resultScore = problem.RunSimulationLite(newSolution);
                 if (resultScore > bestScore)
@@ -342,19 +401,23 @@ namespace hashcode2021
                 }
             }
 
+
             return bestSolution;
         }
+
 
         private static Solution OptimizeCycleDuration(Problem problem, Solution solution, int addCycleDevider)
         {
             Solution bestSolution = null;
             int bestSolutionScore = -1;
             int timesSinceOptimized = 0;
-            while (timesSinceOptimized < 10)
+            while (timesSinceOptimized < 10)//Problem.EntireDuration>DateTime.Now)// timesSinceOptimized < 10)//aa
             {
                 timesSinceOptimized++;
 
+
                 SimulationResult simulationResult = problem.RunSimulation(solution);
+
 
                 if (simulationResult.Score > bestSolutionScore)
                 {
@@ -363,6 +426,7 @@ namespace hashcode2021
                     timesSinceOptimized = 0;
                 }
                 //Console.WriteLine("Score: {0}, Max Blocked Traffic: {1}, Cars not finished: {2}, Best score: {3}", simulationResult.Score, simulationResult.GetMaxBlockedTraffic(), simulationResult.CarsNotFinished.Count, bestSolutionScore);
+
 
                 List<SimulationResult.IntersectionResult> intersectionResults = simulationResult.IntersectionResults.OrderByDescending(o => o.MaxStreetBlockedTraffic).ToList();
                 // Remove intersection without blocked cars
@@ -375,9 +439,11 @@ namespace hashcode2021
                     }
                 }
 
+
                 // Nothing to optimize - break
                 if (intersectionResults.Count == 0)
-                    break;
+                    break; 
+
 
                 for (int i = 0; i < intersectionResults.Count / addCycleDevider; i++)
                 {
@@ -389,14 +455,17 @@ namespace hashcode2021
                 }
             }
 
+
             return bestSolution;
         }
+
 
         private static Solution OptimizeCycleDuration2(Problem problem, Solution solution)
         {
             Dictionary<int, int> lastSimulationWaitingCarsByStreet = new Dictionary<int, int>();
             foreach (Street street in problem.Streets.Values)
                 lastSimulationWaitingCarsByStreet.Add(street.UniqueID, -1);
+
 
             Solution bestSolution = null;
             int bestSolutionScore = -1;
@@ -413,7 +482,9 @@ namespace hashcode2021
                     // Stop if no improvement found
                     break;
 
+
                 Console.WriteLine("Score: {0}, Max Blocked Traffic: {1}, Cars not finished: {2}, Best score: {3}", simulationResult.Score, simulationResult.GetMaxBlockedTraffic(), simulationResult.CarsNotFinished.Count, bestSolutionScore);
+
 
                 List<SimulationResult.IntersectionResult> intersectionResults = simulationResult.IntersectionResults.OrderByDescending(o => o.MaxWaitOnGreenLight).ToList();
                 // Remove intersection without blocked cars
@@ -429,6 +500,7 @@ namespace hashcode2021
                 // Nothing to optimize - break
                 if (intersectionResults.Count == 0)
                     break;
+
 
                 // Add cycle time for the top blocked cars.
                 int lastBestScore = simulationResult.Score;
