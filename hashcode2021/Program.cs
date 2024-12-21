@@ -8,54 +8,12 @@ namespace hashcode2021
     class Program
     {
         static string[] inputFiles = {
-            @"instances/I70_S210_C200.txt",
-            @"instances/I80_S240_C300.txt",
-            @"instances/I80_S480_C600.txt",
-            @"instances/I90_S360_C400.txt",
-            @"instances/I99_S399_C400.txt",
-            @"instances/I100_S400_C600.txt",
-            @"instances/I100_S500_C500.txt",
-            @"instances/I100_S600_C153.txt",
-            @"instances/I110_S330_C450.txt",
-            @"instances/I120_S480_C500.txt",
-            @"instances/I120_S720_C400.txt",
-            @"instances/I150_S45150_C100.txt",
-            @"instances/I155_S57155_C300.txt",
-            @"instances/I180_S1080_C800.txt",
-            @"instances/I200_S1000_C400.txt",
-            @"instances/I200_S1000_C550.txt",
-            @"instances/I200_S4200_C400.txt",
-            @"instances/I200_S17200_C1000.txt",
-            @"instances/I220_S660_C430.txt",
-            @"instances/I220_S1100_C558.txt",
-            @"instances/I241_S43241_C158.txt",
-            @"instances/I300_S900_C500.txt",
-            @"instances/I300_S1500_C469.txt",
-            @"instances/I400_S2400_C944.txt",
-            @"instances/I444_S1776_C666.txt",
-            @"instances/I500_S998_C1000.txt",
-            @"instances/I500_S2000_C315.txt",
-            @"instances/I600_S3000_C332.txt",
-            @"instances/I1662_S10000_C1000.txt",
-            @"instances/I2000_S6000_C376.txt",
-            @"instances/I2000_S12000_C57.txt",
-            @"instances/I2500_S10000_C306.txt",
-            @"instances/I2999_S17994_C103.txt",
-            @"instances/I3000_S12000_C407.txt",
-            @"instances/I3000_S15000_C316.txt",
-            @"instances/I3000_S18000_C227.txt",
-            @"instances/I3333_S13332_C428.txt",
-            @"instances/I4000_S12000_C161.txt",
-            @"instances/I4000_S12000_C387.txt",
             @"instances/I4000_S12000_C397.txt",
-            @"instances/I4000_S20000_C309.txt",
-            @"instances/I4000_S24000_C401.txt",
             @"instances/I7073_S9102_C1000.txt",
-            @"instances/I8000_S95928_C1000.txt",
-            @"instances/I9000_S36000_C1500.txt",
             @"instances/I10000_S35030_C1000.txt",
-            @"instances/I12000_S36000_C2000.txt",
-            @"instances/I10000_S30000_C1200.txt"
+            @"instances/I8000_S95928_C1000.txt",
+            @"instances/I500_S998_C1000.txt",
+            @"instances/I1662_S10000_C1000.txt"
         };
 
         static void Main(string[] args)
@@ -107,6 +65,7 @@ namespace hashcode2021
             // the green light cycle
             solution = OptimizeCycleClearStreetsCarsDidntFinish(problem, solution);
 
+            Console.WriteLine("Initial Solution Score: {0}", problem.RunSimulationLite(solution));
 
             //Hill-Climbing
             solution = OptimizeBruteForce(problem, solution, int.MaxValue);
@@ -224,7 +183,7 @@ namespace hashcode2021
                     {
                         solution = newSolution;
                         bestScore = newScore;
-                        Console.WriteLine("New best: {0} [Delta]", bestScore);
+                        // Console.WriteLine("New best: {0} [Delta]", bestScore);
                     }
                     //if (Problem.EntireDuration <= DateTime.Now) break; //aa
                 }
@@ -259,7 +218,7 @@ namespace hashcode2021
                         {
                             solution = newSolution;
                             bestScore = newScore;
-                            Console.WriteLine("New best: {0} [Swap]", bestScore);
+                            // Console.WriteLine("New best: {0} [Swap]", bestScore);
                         }
                         //if (Problem.EntireDuration <= DateTime.Now) break; //aa
                     }
@@ -309,7 +268,7 @@ namespace hashcode2021
                         {
                             solution = newSolution;
                             bestScore = newScore;
-                            Console.WriteLine("New best: {0} [Move]", bestScore);
+                            // Console.WriteLine("New best: {0} [Move]", bestScore);
                         }
                         //if (Problem.EntireDuration <= DateTime.Now) break; //aa
                     }
