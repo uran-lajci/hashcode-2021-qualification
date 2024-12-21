@@ -8,12 +8,7 @@ namespace hashcode2021
     class Program
     {
         static string[] inputFiles = {
-            @"c:\temp\hashcode\a.txt",
-            @"c:\temp\hashcode\b.txt",
-            @"c:\temp\hashcode\c.txt",
-            @"c:\temp\hashcode\d.txt",
-            @"c:\temp\hashcode\e.txt",
-            @"c:\temp\hashcode\f.txt"
+            @"/home/uranlajci/Documents/GitHub/hashcode-2021-qualification/hashcode2021/instances/I10000_S30000_C1200.txt"
         };
 
         static void Main(string[] args)
